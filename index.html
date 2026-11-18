@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1726" />
+  <meta name="description" content="Estimate how much life insurance could be needed to replace childcare, caregiving, and household work. Free, private, open source." />
+  <title>Care Replacement | Family life insurance planning</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <a href="#calculator" class="skip-link">Skip to calculator</a>
+  <header class="masthead">
+    <div class="wrap header-inner">
+      <a class="brand" href="./" aria-label="Care Replacement home"><span class="brand-icon">CR</span><span>Care<span class="brand-muted">Replacement</span></span></a>
+      <nav aria-label="Main"><a href="#how-it-works">Method</a><a href="#resources">Sources</a><a href="https://github.com/WilliamxLeismer/care-replacement" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero wrap">
+      <div class="eyebrow"><span class="status-dot"></span> FREE • PRIVATE • NO ACCOUNT</div>
+      <h1>The value of care doesn't show up on a paycheck.</h1>
+      <p class="lede">Estimate the life insurance needed to replace childcare, caregiving and household work, whether or not the person being insured earns an income.</p>
+      <div class="hero-points"><span>✓ Year-by-year planning</span><span>✓ Flexible care arrangements</span><span>✓ No data uploaded</span></div>
+    </section>
+    <div class="wrap workspace" id="calculator">
+      <div class="editor">
+        <section class="panel" aria-labelledby="household-heading">
+          <div class="section-title"><span class="section-index">01</span><div><h2 id="household-heading">Your household</h2><p>Describe those who would need replacement care. No names or birth dates required.</p></div></div>
+          <div class="panel-body">
+            <div class="section-row"><h3>Dependents</h3><button class="btn btn-small btn-outline" id="add-dependent" type="button">+ Add dependent</button></div>
+            <div class="table-scroll"><table class="edit-table"><thead><tr><th scope="col">Age now</th><th scope="col">Support until age</th><th scope="col">Extra care hrs/wk<br><span>School / break</span></th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="dependent-rows"></tbody></table></div>
+            <p class="hint">One caregiver can supervise multiple children simultaneously; nanny hours are <strong>not</strong> multiplied by number of children. Daycare is priced per child. Use extra hours for a dependent requiring ongoing support.</p>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="care-heading">
+          <div class="section-title"><span class="section-index">02</span><div><h2 id="care-heading">Replacement childcare</h2><p>Choose the actual help the surviving household expects to purchase.</p></div></div>
+          <div class="panel-body">
+            <fieldset class="strategy-fieldset"><legend>Care arrangement</legend><div id="strategy-options" class="strategy-grid">
+              <label class="strategy-option"><input type="radio" name="strategy" value="live-out" checked /><span><strong>Live-out nanny</strong><small>Paid hourly care</small></span></label>
+              <label class="strategy-option"><input type="radio" name="strategy" value="live-in" /><span><strong>Live-in nanny</strong><small>With housing costs</small></span></label>
+              <label class="strategy-option"><input type="radio" name="strategy" value="daycare" /><span><strong>Daycare + school</strong><small>Child-based fees</small></span></label>
+              <label class="strategy-option"><input type="radio" name="strategy" value="hybrid" /><span><strong>Family + nanny</strong><small>Shared paid hours</small></span></label>
+              <label class="strategy-option"><input type="radio" name="strategy" value="custom" /><span><strong>Custom budget</strong><small>Annual care expense</small></span></label>
+            </div></fieldset>
+            <div id="nanny-fields">
+              <div class="form-grid">
+                <label>Hourly wage ($)<input data-bind="care.hourlyRate" type="number" min="0" step="1" inputmode="decimal" /></label>
+                <label>Employer burden / taxes (%)<input data-bind="care.employerBurdenPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" /></label>
+                <label>Payroll / employer fees ($/yr)<input data-bind="care.payrollAnnual" type="number" min="0" step="100" inputmode="decimal" /></label>
+                <label>Backup childcare ($/yr)<input data-bind="care.backupAnnual" type="number" min="0" step="100" inputmode="decimal" /></label>
+              </div>
+              <div class="inline-check"><label><input data-bind="care.overtime" type="checkbox" /> Apply overtime premium (1.5× beyond weekly threshold)</label></div>
+              <label class="field-compact">Overtime begins after (hours/week) <input data-bind="care.overtimeAfterHours" type="number" min="0" max="168" step="1" /></label>
+              <div class="form-grid single-field" id="housing-field"><label>Additional live-in housing and meals ($/yr)<input data-bind="care.housingAnnual" type="number" min="0" step="100" /></label></div>
+              <div class="form-grid single-field" id="family-field"><label>Hours covered without pay by family (%)<input data-bind="care.familyCoveragePct" type="number" min="0" max="100" step="5" /></label></div>
+              <p class="hint legal-note">Hourly rates and employer burdens are <strong>editable planning assumptions</strong>, not market quotes or a legal payroll calculation. Live-in arrangements do not automatically eliminate overtime or provide 24/7 staffing.</p>
+            </div>
+            <div id="daycare-fields" hidden>
+              <div class="form-grid">
+                <label>Preschool / daycare ($/child/week)<input data-bind="care.daycarePreschoolWeekly" type="number" min="0" step="5" /></label>
+                <label>After-school care ($/child/week)<input data-bind="care.afterSchoolWeekly" type="number" min="0" step="5" /></label>
+                <label>Summer camps ($/child/week)<input data-bind="care.summerCampWeekly" type="number" min="0" step="5" /></label>
+                <label>Teen summer programs ($/child/week)<input data-bind="care.teenCampWeekly" type="number" min="0" step="5" /></label>
+              </div>
+              <p class="hint">Assumes full-year daycare for preschoolers, after-school care during school weeks and summer care during break weeks. Add transport and closures in household services.</p>
+            </div>
+            <div id="custom-fields" hidden><div class="form-grid"><label>Care cost in year 1 ($/yr)<input data-bind="care.customAnnual" type="number" min="0" step="1000" /></label><label>How many years?<input data-bind="care.customYears" type="number" min="0" max="80" step="1" /></label></div><p class="hint">Use this for assisted living, agency staffing, or a specific provider quote. Household services can still be added below.</p></div>
+            <details class="advanced" open><summary>Age-based care schedule</summary>
+              <p class="hint">Set paid supervision hours per week for each age group. School weeks and break weeks are costed separately. Ages refer to each dependent, not the oldest child.</p>
+              <div class="form-grid schedule-ages"><label>School starts at age<input data-bind="schedule.schoolStartAge" type="number" min="1" max="30" step="1" /></label><label>Teen stage starts at age<input data-bind="schedule.teenStartAge" type="number" min="1" max="40" step="1" /></label><label>Adult stage starts at age<input data-bind="schedule.adultAge" type="number" min="1" max="80" step="1" /></label><label>School weeks / year<input data-bind="schedule.schoolWeeks" type="number" min="0" max="52" step="1" /></label><label>Break weeks / year<input data-bind="schedule.breakWeeks" type="number" min="0" max="52" step="1" /></label></div>
+              <div class="table-scroll"><table class="edit-table stage-table"><thead><tr><th scope="col">Stage</th><th scope="col">School hrs/wk</th><th scope="col">Break hrs/wk</th></tr></thead><tbody>
+                <tr><th>Before school age</th><td><input data-bind="schedule.preschoolSchoolHours" type="number" min="0" max="168" step="1" /></td><td><input data-bind="schedule.preschoolBreakHours" type="number" min="0" max="168" step="1" /></td></tr>
+                <tr><th>School age</th><td><input data-bind="schedule.schoolSchoolHours" type="number" min="0" max="168" step="1" /></td><td><input data-bind="schedule.schoolBreakHours" type="number" min="0" max="168" step="1" /></td></tr>
+                <tr><th>Teen</th><td><input data-bind="schedule.teenSchoolHours" type="number" min="0" max="168" step="1" /></td><td><input data-bind="schedule.teenBreakHours" type="number" min="0" max="168" step="1" /></td></tr>
+              </tbody></table></div>
+            </details>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="services-heading">
+          <div class="section-title"><span class="section-index">03</span><div><h2 id="services-heading">Other household work</h2><p>Only include the duties that require replacement spending.</p></div></div>
+          <div class="panel-body">
+            <div class="section-row"><h3>Paid services</h3><button class="btn btn-small btn-outline" type="button" id="add-service">+ Add service</button></div>
+            <div id="service-rows" class="service-list"></div>
+            <p class="hint">When a nanny is already paid to do a chore, mark it “Covered by nanny” to avoid charging for that work twice. Confirm the nanny actually has capacity to do it.</p>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="finance-heading">
+          <div class="section-title"><span class="section-index">04</span><div><h2 id="finance-heading">Finances and assumptions</h2><p>Lost income is optional. If surviving earnings continue unchanged, leave both income-loss fields at zero.</p></div></div>
+          <div class="panel-body">
+            <h3>Income changes</h3>
+            <div class="form-grid">
+              <label>Insured person's lost take-home pay ($/yr)<input data-bind="finances.lostInsuredNetAnnual" type="number" min="0" step="1000" /></label>
+              <label>Years that income is needed<input data-bind="finances.lostInsuredYears" type="number" min="0" max="80" step="1" /></label>
+              <label>Survivor's reduced take-home pay ($/yr)<input data-bind="finances.survivorIncomeReductionAnnual" type="number" min="0" step="1000" /></label>
+              <label>Years with reduced income<input data-bind="finances.survivorIncomeReductionYears" type="number" min="0" max="80" step="1" /></label>
+            </div>
+            <h3 class="subsection">Other obligations and benefits</h3>
+            <div class="form-grid">
+              <label>Other ongoing new costs ($/yr)<input data-bind="finances.otherAnnual" type="number" min="0" step="500" /></label>
+              <label>Other costs duration (years)<input data-bind="finances.otherYears" type="number" min="0" max="80" step="1" /></label>
+              <label>Verified survivor benefits ($/yr)<input data-bind="finances.survivorBenefitsAnnual" type="number" min="0" step="500" /></label>
+              <label>Benefits duration (years)<input data-bind="finances.survivorBenefitsYears" type="number" min="0" max="80" step="1" /></label>
+              <label>Existing life insurance ($)<input data-bind="finances.existingInsurance" type="number" min="0" step="5000" /></label>
+              <label>Dedicated available assets ($)<input data-bind="finances.dedicatedAssets" type="number" min="0" step="5000" /></label>
+              <label>Funeral / final expenses ($)<input data-bind="finances.funeralCost" type="number" min="0" step="500" /></label>
+              <label>Transition reserve ($)<input data-bind="finances.transitionCost" type="number" min="0" step="500" /></label>
+              <label>Optional debt payoff ($)<input data-bind="finances.debtPayoff" type="number" min="0" step="1000" /></label>
+            </div>
+            <h3 class="subsection">Projection assumptions</h3>
+            <div class="form-grid">
+              <label>Years to model<input data-bind="finances.horizonYears" type="number" min="1" max="80" step="1" /></label>
+              <label>Care wage / service cost growth (%/yr)<input data-bind="finances.wageGrowthPct" type="number" min="-99" max="50" step="0.25" /></label>
+              <label>General inflation (%/yr)<input data-bind="finances.inflationPct" type="number" min="-99" max="50" step="0.25" /></label>
+              <label>Nominal investment / discount rate (%/yr)<input data-bind="finances.discountRatePct" type="number" min="-99" max="50" step="0.25" /></label>
+            </div>
+            <p class="hint">The investment return is an assumption, not a guarantee. Insurance proceeds and dedicated assets are offset at present value. Survivor benefits are held constant in nominal dollars by default, rather than assuming future cost-of-living adjustments.</p>
+          </div>
+        </section>
+      </div>
+      <aside class="results-column" aria-labelledby="result-heading"><div class="results-sticky">
+        <section class="result-card">
+          <div class="result-eyebrow">ESTIMATED COVERAGE NEEDED</div>
+          <p id="coverage-amount" class="coverage-amount" aria-live="polite">Calculating…</p>
+          <div id="rounded-suggestion" class="suggestion"></div>
+          <div class="result-meta"><div><span>Initial annual replacement cost</span><strong id="first-year">—</strong></div><div><span>Estimated coverage period</span><strong id="term-years">—</strong></div></div>
+          <div class="range"><div class="range-heading">Care cost scenarios <button type="button" id="range-info" class="icon-btn" aria-label="Explain low and high scenarios" title="Care and service costs change by −20% / +25%; other inputs are unchanged.">ⓘ</button></div><div id="scenario-results" class="range-values"></div></div>
+          <div class="result-actions"><button id="download-json" type="button" class="btn btn-primary">Save scenario</button><button id="download-csv" type="button" class="btn btn-outline">Export annual CSV</button></div>
+          <div class="result-actions"><button id="print-report" type="button" class="btn btn-outline">Print results</button><label class="btn btn-outline btn-file">Load scenario<input id="load-json" type="file" accept="application/json,.json" /></label></div>
+          <p class="privacy-note">🔒 Calculated in your browser. No account, tracking, or personal-data upload.</p>
+        </section>
+        <p class="aside-disclaimer">Planning estimate only, not an insurance quote, legal, tax, or investment recommendation. Verify wages, staffing, benefits and the applicable labor rules before buying coverage.</p>
+      </div></aside>
+    </div>
+    <section class="wrap analysis" id="details"><div class="analysis-heading"><div><h2>Understand the estimate</h2><p>See what drives the number and when the household would need replacement spending.</p></div><button class="btn btn-outline btn-small" id="reset-scenario" type="button">Reset example</button></div>
+      <div id="errors" role="alert" hidden></div><div id="warnings" aria-live="polite"></div>
+      <div class="analysis-grid"><article class="panel details-card"><h3>Present-value breakdown</h3><div id="cost-breakdown"></div></article><article class="panel details-card"><h3>Childcare arrangement comparison</h3><p class="hint">Illustrative alternatives with the same household and other inputs. Each strategy has different service coverage rules.</p><div id="strategy-comparison"></div></article></div>
+      <article class="panel chart-panel"><div class="section-row"><div><h3>Annual replacement expenses</h3><p class="hint">Future nominal dollars; the chart shows spending before survivor benefits and existing assets.</p></div></div><div id="cost-chart" role="img" aria-label="Annual replacement cost chart"></div></article>
+      <details class="panel annual-details"><summary>View year-by-year cash flows</summary><div class="table-scroll"><table class="data-table"><thead><tr><th>Year</th><th>Care</th><th>Household</th><th>Income</th><th>Other</th><th>Benefits</th><th>Unfunded</th><th>Present value</th></tr></thead><tbody id="annual-rows"></tbody></table></div></details>
+    </section>
+    <section class="wrap education" id="how-it-works"><h2>How the model works</h2><div class="education-grid"><article><span class="education-icon">01</span><h3>Replace purchased services</h3><p>Model the paid childcare, ongoing support, and household duties a surviving household would actually need to buy. Do not price every unpaid hour automatically.</p></article><article><span class="education-icon">02</span><h3>Follow ages over time</h3><p>Ages, school schedules, dependent-specific support, and care arrangements determine each year's cash outflow. Siblings' nanny hours overlap rather than being added together.</p></article><article><span class="education-icon">03</span><h3>Calculate today's funding need</h3><p>Escalate future costs, discount end-of-year cash flows, deduct eligible annual survivor benefits, and subtract insurance or dedicated available assets from the present-value requirement.</p></article></div>
+    <div class="formula"><strong>Coverage estimate</strong> = present value of annual funding shortfalls + one-time costs − existing insurance − dedicated assets</div><p class="hint">Annual shortfalls cannot go below zero. Benefit excess in one year is not assumed available to fund another year. The suggested policy size is rounded up to the next $50,000. No premium or underwriting estimate is provided.</p></section>
+    <section class="wrap sources" id="resources"><h2>Sources and limitations</h2><p>Starting assumptions are illustrative US budgeting inputs, not location-specific quotations. Enter quotes from qualified providers, verify survivor benefits, and consult employment/tax guidance for your jurisdiction.</p><ul><li><a href="https://www.irs.gov/publications/p926" target="_blank" rel="noopener noreferrer">IRS Publication 926: Household Employer's Tax Guide</a></li><li><a href="https://www.dol.gov/agencies/whd/fact-sheets/79b-flsa-live-in-domestic-workers" target="_blank" rel="noopener noreferrer">US DOL Fact Sheet 79B: Live-in domestic employees</a></li><li><a href="https://www.dol.gov/agencies/whd/fact-sheets/79d-flsa-domestic-service-hours-worked" target="_blank" rel="noopener noreferrer">US DOL Fact Sheet 79D: Compensable hours</a></li><li><a href="https://www.bls.gov/oes/tables.htm" target="_blank" rel="noopener noreferrer">BLS: Occupational Employment and Wage Statistics</a></li><li><a href="https://www.ssa.gov/survivor/eligibility" target="_blank" rel="noopener noreferrer">SSA: Survivor benefits eligibility</a></li></ul></section>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><span>CareReplacement · Open source · MIT licensed</span><span>Private-by-design family financial planning</span></div></footer>
+</body></html>
